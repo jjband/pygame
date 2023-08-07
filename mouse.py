@@ -18,7 +18,7 @@ pygame.mouse.set_visible(False)
 done = False
 while not done:
     for event in pygame.event.get():
-        if event == pygame.QUIT:
+        if event.type == pygame.QUIT:
             done = True
     pos = pygame.mouse.get_pos()
     screen.fill(white)

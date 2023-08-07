@@ -1,6 +1,7 @@
 import pygame, random
 from time import sleep
 
+#게임 화면 설정
 screen_width = 800
 screen_height = 600
 grid_size = 20
@@ -8,6 +9,7 @@ grid_width = (screen_width/grid_size)
 grid_height = (screen_height/grid_size)
 
 
+#색깔 설정
 white = (255,255,255)
 orange = (250,150,0)
 gray = (100,100,100)
@@ -18,18 +20,22 @@ down = (0, 1)
 left = (-1, 0)
 right = (1, 0)
 
+#스네이크 만들기
 class Snake():
     def __init__(self) :
         self.create()
+    
+    #스네이크 길이, 처음 시작 방향 설정
     def create(self):
         self.length = 2
-        self.positions = [(int(screen_width/2), int(screen_height))]
+        self.positions = [(int(screen_width/2), int(screen_height/2))]
         self.direction = random.choice([up, down, left, right])
     def control(self, xy):  #xy에 up, down, left, right의 값이 들어간다~~~
         if (xy[0]*-1, xy[1]*-1) == self.direction:
             return
         else:
             self.direction = xy
+    #움직이기 함수
     def move(self):
         cur = self.positions[0]
         x, y = self.direction
@@ -44,36 +50,41 @@ class Snake():
         else:
             self.positions.insert(0, new)
             if len(self.positions) > self.length:
-                self.positions.pip()
+                self.positions.pop()
     def eat(self):
         self.length +=1
     def draw(self, screen):
         for p in self.positions:
-            rect = pygame.Rect((p[0], p[1], (grid_size, grid_size)))
+            rect = pygame.Rect(p[0], p[1], grid_size, grid_size)
             pygame.draw.rect(screen, gray, rect)
 
+#먹이 설정
 class Feed():
     def __init__(self):
         self.position = (0,0)
         self.color = orange
         self.create()
+    #먹이 위치 정하기
     def create(self):
         x = random.randint(0, grid_width)
-        y = random.random(0, grid_height)
+        y = random.randint(0, grid_height)
         self.position = x*grid_size, y*grid_size
-
+    #먹어 그리기
     def draw(self, screen):
-        rect = pygame.Rect((self.position[0], self.positionp[1]), (grid_size, grid_size))
+        rect = pygame.Rect((self.position[0], self.position[1]), (grid_size, grid_size))
         pygame.draw.rect(screen, self.color, rect)        
 
+#걍 게임 운영
 class Game:
     def __init__(self):
         self.snake = Snake()
         self.feed = Feed()
         self.speed = 5
+    
+    #방향키 입력 받기
     def process_events(self):
         for event in pygame.event.get():
-            if event == pygame.QUIT():
+            if event.type == pygame.QUIT:
                 return True
             elif event.type == pygame.KEYDOWN:
                 if event.key ==pygame.K_UP:
@@ -90,8 +101,8 @@ class Game:
         self.check_eat(self.snake, self.feed)
         self.speed = (10+self.snake.length)/2
 
-    def check_out(self, snake, feed):
-        if snake.poitions[0] == feed.postion:
+    def check_eat(self, snake, feed):
+        if snake.positions[0] == feed.position:
             snake.eat()
             feed.create()
     
@@ -105,9 +116,9 @@ class Game:
 
     def display_frame(self, screen):
         screen.fill(white)
-        self.draw_info(self.snake.length, self.snake.speed, screen)
+        self.draw_info(self.snake.length, self.speed, screen)
         self.feed.draw(screen)
-        self.feed.fraw(screen)
+        self.snake.draw(screen)
         screen.blit(screen, (0,0))
 
 
@@ -128,7 +139,7 @@ def main():
         game.display_frame(screen)
         pygame.display.flip()
         
-        clock.tick(60)
+        clock.tick(game.speed)
     pygame.quit()
 
 
