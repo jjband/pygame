@@ -12,7 +12,8 @@ orange = (250,170,70)
 
 class Player():
     def __init__(self):
-        self.rect = pygame.Rect(screen_w//2, 660, 15, 15)
+        self.image = pygame.image.load(os.path.join(assets_path, "New Piskel-1.png (1).png"))
+        self.rect = self.image.get_rect()
         self.reset()
 
     def reset(self):
@@ -21,8 +22,7 @@ class Player():
         self.dx = 0
 
     def draw(self,screen):
-        screen.blit()
-
+        screen.blit(self.image, self.rect)
 
 def main():
     pygame.init()
@@ -35,11 +35,11 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        screen.fill(white)
+        #screen.fill(white)
         player.draw(screen)
 
         pygame.display.flip()
-        clock.tick(120)
+        clock.tick(60)
     pygame.quit()
 
 main()
