@@ -43,7 +43,7 @@ class Ball():
 
 class Player():
     def __init__(self, ping_sound):
-        self.rect = pygame.Rect(screen_w//2, screen_h-40, 500, 15)
+        self.rect = pygame.Rect(screen_w//2, screen_h-40, 50, 15)
         self.ping_sound = ping_sound
         self.dx = 0
     def update(self, ball):
