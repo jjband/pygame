@@ -1,7 +1,6 @@
 import pygame
 import random
-
-life = 3
+import sys
 
 
 screen_w = 900
@@ -15,6 +14,17 @@ blue = (0,0,255)
 
 
 color  = red
+
+class life():
+    def _init__(self, value):
+        self.life = value
+
+    def get_life(self):
+        return self.life
+
+    def set_life(self, value):
+        self.life += value
+        return self.life
 
 
 class Player():
@@ -51,8 +61,17 @@ class Enemy():
         if self.y > screen_h:
             self.reset()
 
+    def check_crush(self, player, life):
+        if self.rect.colliderect(player.rect):
+            life.set_life(-1)
+            self.reset()
+
+
+
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
+
+    
 
 
     
@@ -81,6 +100,7 @@ def main():
         if keys[pygame.K_RIGHT]:
             player.move(1)
 
+
         for enemy in enemies:
             enemy.move()
 
@@ -89,6 +109,10 @@ def main():
 
         for enemy in enemies:
             enemy.draw(screen)
+
+        if life.get_life() < 0:
+            pygame.quit()
+            sys.exit()
 
         pygame.display.flip()
         clock.tick(120)
