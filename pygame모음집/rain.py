@@ -2,7 +2,6 @@ import pygame
 import random
 import sys
 
-
 screen_w = 900
 screen_h = 700
 
@@ -11,38 +10,33 @@ orange = (250, 170, 70)
 red = (255,0,0)
 yellow = (255,255,51)
 blue = (0,0,255)
+black = (0,0,0)
 
 
-color  = red
+color = red
 
-class life():
-    def _init__(self, value):
-        self.life = value
+class Life():
+    def __init__(self, life2):
+        self.life = life2
 
     def get_life(self):
         return self.life
 
-    def set_life(self, value):
-        self.life += value
+    def set_life(self, life2):
+        self.life += life2
         return self.life
 
 
 class Player():
     def __init__(self):
-        self.rect()
-
-    def rect(self):
-        self.x = screen_w // 2
-        self.y = 660
-        self.dx = 0
-        self.radius = 15
+        self.rect = pygame.Rect((screen_w // 2, 660, 30, 30))
 
     def move(self, direction):
         speed = 5
-        self.x += direction * speed
+        self.rect.move_ip(direction * speed, 0)
 
     def draw(self, screen):
-        pygame.draw.circle(screen, color, (self.x, self.y), self.radius)
+        pygame.draw.circle(screen, color, self.rect.center, 15)
         
 
 class Enemy():
@@ -55,9 +49,11 @@ class Enemy():
         self.speed = random.randint(3, 7)
         self.radius = 5
         self.color = blue
+        self.rect = pygame.Rect((self.x, self.y, 10, 10))
 
     def move(self):
         self.y += self.speed
+        self.rect.move_ip(0, self.speed)
         if self.y > screen_h:
             self.reset()
 
@@ -67,14 +63,16 @@ class Enemy():
             self.reset()
 
 
-
     def draw(self, screen):
-        pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
-
-    
+        pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
 
 
-    
+def display_life(screen, font, life):
+    text = font.render(f"Life: {life.get_life()}", True, (0, 0, 0))
+    screen.blit(text, (10, 10))
+        
+
+
 
 
 def main():
@@ -84,15 +82,20 @@ def main():
     clock = pygame.time.Clock()
     player = Player()
 
-    enemies = [Enemy()for _ in range(10)]
+    life_font = pygame.font.Font(None, 36)
 
+    life = Life(3)
+    enemies = [Enemy()for _ in range(15)]
 
+    color = red
     running = True
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+        
+
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -103,6 +106,8 @@ def main():
 
         for enemy in enemies:
             enemy.move()
+            enemy.check_crush(player, life)
+
 
         screen.fill(white)
         player.draw(screen)
@@ -110,7 +115,9 @@ def main():
         for enemy in enemies:
             enemy.draw(screen)
 
-        if life.get_life() < 0:
+        display_life(screen, life_font, life)
+
+        if life.get_life() <= 0:
             pygame.quit()
             sys.exit()
 
