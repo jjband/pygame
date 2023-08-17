@@ -12,7 +12,7 @@ headers = {
 }
 
 request_data = {
-    "prompt": "shiba",  
+    "prompt": "cat with yellow eyes",  
     "width": 512,  
     "height": 512,  
     "samples": 1,  
