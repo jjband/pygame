@@ -1,6 +1,8 @@
+#$OPENAI_API_KEY
+
 import openai
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 model_engine = "davinci"
 
