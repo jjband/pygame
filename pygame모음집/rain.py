@@ -122,7 +122,7 @@ def main():
             sys.exit()
 
         pygame.display.flip()
-        clock.tick(120)
+        clock.tick(140)
     pygame.quit()
 
 
