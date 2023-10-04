@@ -1,4 +1,4 @@
-import pygame
+import pygame,os
 import random
 
 screen_w = 900
@@ -9,7 +9,13 @@ red = (255,0,0)
 yellow = (255,255,51)
 blue = (0,0,255)
 black = (0,0,0)
+sky_blue = (135, 206, 235)
+yellow_orange = (255, 214, 77)
+white_green = (204, 255, 204)
 color = red
+current_path = os.path.dirname(__file__)
+assets_path = os.path.join(current_path, "assets")
+대머리모음 = "대머리1.png"
 
 
 class Life():
@@ -20,18 +26,27 @@ class Life():
     def set_life(self, life2):
         self.life += life2
         return self.life
-    
 class Player():
     def __init__(self):
+        self.image = pygame.image.load(os.path.join(assets_path, 대머리모음))
         self.radius = 15
-        self.rect = pygame.Rect(screen_w // 2 - self.radius, 660 - self.radius,
-                                self.radius * 2, self.radius * 2)
+        self.rect = self.image.get_rect()
+        self.width = self.image.get_rect().width
+        self.height = self.image.get_rect().height
         self.score = 0
+        self.reset()
+
+    def reset(self):
+        self.rect.x = screen_w // 2 - self.width // 2 
+        self.rect.y = screen_h - self.height // 2 -50
+        
+        
     def move(self, direction):
         speed = 5
         self.rect.move_ip(direction * speed, 0)
-    def draw(self, screen, color):
-        pygame.draw.circle(screen, color, self.rect.center, 15)
+            
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
     
         
 class Enemy():
@@ -86,7 +101,7 @@ def display_score(screen, font,score ):
     screen.blit(score_text,(screen_w -200 ,10))
 
 def display_life(screen, font, life):
-    text = font.render(f"Life: {life.get_life()}", True, (0, 0, 0))
+    text = font.render(f"머리카락 수: {life.get_life()}", True, (0, 0, 0))
     screen.blit(text, (10, 10))
 
 def display_timer(screen, font, start_time):
@@ -102,12 +117,12 @@ def display_timer(screen, font, start_time):
     screen.blit(timer_text, (screen_w - 100, 10))
 
 def display_story(screen, font):
-    story_text1 = font.render("On a rainy day,", True, (0, 0, 0))
-    story_text2 = font.render("a little flame got lost.", True, (0, 0, 0))
-    story_text3 = font.render("Please help the little flame find its way again!", True, (0, 0 ,100))
+    story_text1 = font.render("탈모인에게 비는 매우 위험한 존재입니다.", True, (0, 0, 0))
+    story_text2 = font.render("특히 산성비는 더욱 위험하지요.", True, (0, 0, 0))
+    story_text3 = font.render("우리 탈모친구가 비를 피할수 있게 도와주세요!", True, (0, 0 ,255))
     screen.blit(story_text1, (20,200))
-    screen.blit(story_text2, (20,240))
-    screen.blit(story_text3, (20, 280))
+    screen.blit(story_text2, (20,260))
+    screen.blit(story_text3, (20,320))
     
 
 
@@ -116,21 +131,21 @@ def display_story(screen, font):
 def main():
     pygame.init()
     screen = pygame.display.set_mode((screen_w, screen_h))
-    pygame.display.set_caption("비 피하기")
+    pygame.display.set_caption("산성비 피하기")
     clock = pygame.time.Clock()
-    enemy_count = 15
+    enemy_count = 10
     player = Player()
     life_font = pygame.font.Font(None, 36)
     timer_font = pygame.font.Font(None, 36)
-    story_font = pygame.font.Font(None, 36)
+    story_font = pygame.font.SysFont("Malgun Gothic", 36, 0,0)
     score_font = pygame.font.Font(None, 36)
-    font = pygame.font.SysFont("Malgun Gothic", 30, False, False)
+    font = pygame.font.SysFont("Malgun Gothic", 30, True, True)
     font1 = pygame.font.SysFont("Malgun Gothic", 70, False, False)
-    menu_text = font.render("Press spacekey to start game", True, (0, 0, 0))
-    menu_text1 = font1.render("Avoid", True, (0, 0, 100))  #이름(위)
-    menu_text2 = font1.render("the rain", True, (0, 0, 100))  #이름(밑)
+    menu_text = font.render("Press space key to start game", True, (0, 0, 0))
+    menu_text1 = font1.render("산성비를 조심해!", True, (0, 0, 100))  #이름(위)
 
-    life = Life(3)
+
+    life = Life(5)
     best_time = 0
     start_time = None 
     enemies = [Enemy()for _ in range(enemy_count)]
@@ -142,7 +157,6 @@ def main():
     spawn_coin = 0
     spawn_time = pygame.time.get_ticks()
 
-    
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -155,6 +169,8 @@ def main():
                     elif show_story:
                         show_story = False
                         start_time = pygame.time.get_ticks()
+        if life == Life(4):
+            대머리모음 = "대머리2.png"
 
         keys = pygame.key.get_pressed()
         if not menu and not show_story:
@@ -182,13 +198,13 @@ def main():
 
                 
         if menu:
-            screen.fill(white)
-            screen.blit(menu_text, (20,400))
-            screen.blit(menu_text1, (320,175))
-            screen.blit(menu_text2, (340,245))
+            screen.fill(yellow_orange)
+            player.draw(screen)
+            screen.blit(menu_text, (225,400))
+            screen.blit(menu_text1, (200,175))
 
         elif show_story:        
-            screen.fill(white)
+            screen.fill(white_green)
             display_story(screen, story_font)
 
         else:
@@ -196,8 +212,8 @@ def main():
                 enemy.move()
                 enemy.check_crush(player, life)
 
-            screen.fill(white)
-            player.draw(screen,color)
+            screen.fill(sky_blue)
+            player.draw(screen)
 
 
             for enemy in enemies:
@@ -211,7 +227,7 @@ def main():
 
             if life.get_life() <= 0:
                 menu  = True
-                life  = Life(3)
+                life  = Life(5)
                 start_time = None
        
                 for enemy in enemies: 
