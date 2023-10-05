@@ -44,15 +44,14 @@ class Player():
     def reset(self, life_obj, image_name):
         self.rect.x = screen_w // 2 - self.width // 2 
         self.rect.y = screen_h - self.height // 2 - 50
-        life = life_obj.get_life()
-        print(life)
-        if life == 4:
+        
+        if life_obj.get_life() == 4:
             image_name = "대머리2.png"
-        elif life == 3:
+        elif life_obj.get_life() == 3:
             image_name = "대머리3.png"
-        elif life == 2:
+        elif life_obj.get_life() == 2:
             image_name = "대머리4.png"
-        elif life == 1:
+        elif life_obj.get_life() == 1:
             image_name = "대머리5.png"
 
         self.image = pygame.image.load(os.path.join(assets_path, image_name))
