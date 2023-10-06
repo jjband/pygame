@@ -103,6 +103,22 @@ class Enemy():
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
 
+class Crash():
+    def __init__(self):
+        self.image = pygame.image.load(os.path.join(assets_path, "crash.png"))
+        self.rect = self.image.get_rect()
+        self.reset()
+
+    def reset(self):
+        self.rect.x = random.randint(0, screen_w - self.rect.width)
+        self.rect.y = 620
+        self.spawn_time = pygame.time.get_ticks()
+
+    def draw(self, screen):
+        if pygame.time.get_ticks() - self.spawn_time < 1000:
+            screen.blit(self.image, (self.rect.x, self.rect.y))
+
+
 
 
 
@@ -158,6 +174,8 @@ def main():
     best_time = 0
     start_time = None 
     enemies = [Enemy()for _ in range(enemy_count)]
+    crashes = []
+    last_crash_spawn_time = None
     player.reset()
     color = red
     running = True
@@ -168,6 +186,7 @@ def main():
     spawn_time = pygame.time.get_ticks()
 
     while running:
+        current_time = pygame.time.get_ticks()
         
 
         for event in pygame.event.get():
@@ -185,6 +204,9 @@ def main():
 
         keys = pygame.key.get_pressed()
         if not menu and not show_story:
+            if last_crash_spawn_time is None or current_time - last_crash_spawn_time >= 2000:
+                crashes.append(Crash())
+                last_crash_spawn_time = current_time
             
 
             if keys[pygame.K_LEFT]:
@@ -192,7 +214,7 @@ def main():
             if keys[pygame.K_RIGHT]:
                 player.move(1)
 
-        if not menu and not show_story and pygame.time.get_ticks() - spawn_time > 3000:
+        if not menu and not show_story and pygame.time.get_ticks() - spawn_time > 2000:
             spawn_time = pygame.time.get_ticks()
 
 
@@ -226,6 +248,11 @@ def main():
             screen.blit(ground_imgae, (0,555))
 
             player.draw(screen)
+
+            for crash in crashes[:]:
+                crash.draw(screen)
+                if current_time - crash.spawn_time >= 2000:
+                    crashes.remove(crash)
             
 
 
