@@ -35,26 +35,44 @@ class Life():
     
 class Player():
     def __init__(self):
-        self.image = pygame.image.load(os.path.join(assets_path, image_name))
+        self.image_name = "대머리1.png"
+        self.image = pygame.image.load(os.path.join(assets_path, self.image_name))
         self.radius = 15
         self.rect = self.image.get_rect()
         self.width = self.image.get_rect().width
         self.height = self.image.get_rect().height
-        self.reset(Life(5), "대머리1.png")
-    def reset(self, life_obj, image_name):
+        self.life_obj = Life(5)
+        
+        
+        
+        
+        self.reset()
+
+    def reset(self):
         self.rect.x = screen_w // 2 - self.width // 2 
         self.rect.y = screen_h - self.height // 2 - 50
-        
-        if life_obj.get_life() == 4:
-            image_name = "대머리2.png"
-        elif life_obj.get_life() == 3:
-            image_name = "대머리3.png"
-        elif life_obj.get_life() == 2:
-            image_name = "대머리4.png"
-        elif life_obj.get_life() == 1:
-            image_name = "대머리5.png"
-
+        self.image_name = "대머리1.png"
         self.image = pygame.image.load(os.path.join(assets_path, image_name))
+
+    def check_crush(self, enemies):
+        for enemy in enemies:
+            if enemy.rect.colliderect(self.rect):  
+                self.life_obj.set_life(-1)  
+                if self.life_obj.get_life() == 4:
+                    self.image_name = "대머리2.png"
+                elif self.life_obj.get_life() == 3:
+                    self.image_name = "대머리3.png"
+                elif self.life_obj.get_life() == 2:
+                    self.image_name = "대머리4.png"
+                elif self.life_obj.get_life() == 1:
+                    self.image_name = "대머리5.png"
+
+                self.image = pygame.image.load(os.path.join(assets_path, self.image_name))
+                
+                enemy.reset()
+                
+            
+                
         
         
     def move(self, direction):
@@ -80,11 +98,7 @@ class Enemy():
         self.rect.move_ip(0, self.speed)
         if self.y > screen_h:
             self.reset()
-    def check_crush(self, player, life):
-        if self.rect.colliderect(player.rect):
-            life.set_life(-1)
-            player.life -=1
-            self.reset()
+            
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
@@ -96,8 +110,8 @@ class Enemy():
         
             
 
-def display_life(screen, font, life):
-    text = font.render(f"머리카락 수: {life.get_life()}", True, (0, 0, 0))
+def display_life(screen, font, life_obj):
+    text = font.render(f"머리카락 수: {life_obj.get_life()}", True, (0, 0, 0))
     screen.blit(text, (10, 10))
 
 def display_timer(screen, font, start_time):
@@ -140,12 +154,11 @@ def main():
     menu_text = font.render("Press space key to start game", True, (0, 0, 0))
     menu_text1 = font1.render("산성비를 조심해!", True, (0, 0, 100))  #이름(위)
 
-
     life = Life(5)
     best_time = 0
     start_time = None 
     enemies = [Enemy()for _ in range(enemy_count)]
-    player.reset(Life(5), "대머리1.png")
+    player.reset()
     color = red
     running = True
     menu = True
@@ -155,6 +168,8 @@ def main():
     spawn_time = pygame.time.get_ticks()
 
     while running:
+        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -170,6 +185,8 @@ def main():
 
         keys = pygame.key.get_pressed()
         if not menu and not show_story:
+            
+
             if keys[pygame.K_LEFT]:
                 player.move(-1)
             if keys[pygame.K_RIGHT]:
@@ -201,7 +218,8 @@ def main():
         else:
             for enemy in enemies:
                 enemy.move()
-                enemy.check_crush(player, life)
+                
+                player.check_crush(enemies)
 
             screen.fill(sky_blue)
             screen.blit(ground_imgae, (528,590))
@@ -214,16 +232,18 @@ def main():
             for enemy in enemies:
                 enemy.draw(screen)
 
-            display_life(screen, life_font, life)
+            display_life(screen, life_font, player.life_obj)
 
             if start_time is not None:  
                 display_timer(screen,timer_font,start_time)
 
-            if life.get_life() <= 0:
-                menu  = True
-                life  = Life(5)
+            if player.life_obj.get_life() <= 0:
+                menu = True
+                player.life_obj.set_life(5) 
+                life = player.life_obj
                 start_time = None
-       
+                player.reset()
+
                 for enemy in enemies: 
                     enemy.reset()
                 
