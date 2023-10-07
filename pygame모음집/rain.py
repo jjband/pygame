@@ -105,13 +105,13 @@ class Enemy():
 
 class Crash():
     def __init__(self):
-        self.image = pygame.image.load(os.path.join(assets_path, "crash.png"))
+        self.image = pygame.transform.scale(pygame.image.load(os.path.join(assets_path, "번개.png")), (100, 100))
         self.rect = self.image.get_rect()
         self.reset()
 
     def reset(self):
         self.rect.x = random.randint(0, screen_w - self.rect.width)
-        self.rect.y = 620
+        self.rect.y = 610
         self.spawn_time = pygame.time.get_ticks()
 
     def draw(self, screen):
