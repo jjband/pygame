@@ -157,7 +157,7 @@ def display_story(screen, font):
 def main():
     pygame.init()
     screen = pygame.display.set_mode((screen_w, screen_h))
-    pygame.display.set_caption("산성비 피하기")
+    pygame.display.set_caption("박성현 빡빡이")
     clock = pygame.time.Clock()
     enemy_count = 10
     player = Player()
