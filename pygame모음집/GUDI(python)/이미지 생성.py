@@ -12,7 +12,9 @@ headers = {
 }
 
 request_data = {
-    "prompt": "cat with yellow eyes",  
+    "prompt": "cat",
+
+    "negative_prompt" : "ugly",  
     "width": 512,  
     "height": 512,  
     "samples": 1,  
@@ -20,6 +22,7 @@ request_data = {
 }
 
 # API 요청
+
 response = requests.post(URL, json=request_data, headers=headers)
 
 if response.status_code == 200:
