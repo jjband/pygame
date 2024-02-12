@@ -12,9 +12,9 @@ headers = {
 }
 
 request_data = {
-    "prompt": "cat",
+    "prompt": "",
 
-    "negative_prompt" : "ugly",  
+    "negative_prompt" : "Low quality, old people, ",  
     "width": 512,  
     "height": 512,  
     "samples": 1,  
