@@ -12,9 +12,9 @@ headers = {
 }
 
 request_data = {
-    "prompt": "",
+    "prompt": "white girl, very sexy, big pussy, big ass,beautiful, wearing a small bikini",
 
-    "negative_prompt" : "Low quality, old people, ",  
+    "negative_prompt" : "Low quality,person,mosaic, out of body",  
     "width": 512,  
     "height": 512,  
     "samples": 1,  
